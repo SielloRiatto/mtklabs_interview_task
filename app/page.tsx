@@ -1,95 +1,97 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { useState, useEffect } from "react"
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
+import {
+  AutocompleteRenderInputParams,
+  Autocomplete,
+  Box,
+  Container,
+  CssBaseline,
+  TextField,
+  Typography,
+  CircularProgress,
+} from "@mui/material"
+
+interface AirportData {
+  name: string,
+  country_code: string,
+  iata_code: string,
+  icao_code: string,
+  lat: number,
+  lng: number,
+  population?: number,
+  continent?: string,
+  currency?: string,
+  names?: {
+    [key: string]: string
+  }[]
+}
+
+function AutocompleteTextInput(params:AutocompleteRenderInputParams) {
+  return <TextField {...params} label="Airport" />
+}
+
+function CentralizedProgress() {
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center">
+      <CircularProgress />
+    </Box>
+  )
+}
 
 export default function Home() {
+  const [airports, setAirports] = useState([])
+
+  useEffect(() => {
+    const url = 'https://airlabs.co/api/v9/airports'
+    const params = {
+      api_key: 'daae47ca-1693-4405-ae4c-a9029e84b0dc',
+      country_code: 'US',
+      _fields: 'name'
+    }
+
+    const queryString = new URLSearchParams(params).toString()
+
+    fetch(`${url}?${queryString}`)
+    .then((response) => {
+      if (response.ok) {
+        return response.json()
+      }
+
+      throw new Error(`Request failed with ${response.status} - ${response.statusText}`)
+    })
+    .then((json) => {
+      const airportsNames = json.response.map((data: AirportData) => data.name)
+      setAirports(airportsNames)
+    })
+    .catch((err) => {
+      console.log(`Can't fetch an airports list: `, err.message)      
+    })
+  }, [])
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <>
+      <CssBaseline />
+      <Container maxWidth="md">
+        <Grid2 container spacing={2}>
+          <Grid2 xs={12}>
+            <Box style={{ paddingTop: "120px" }}>
+              <Typography variant="h3" gutterBottom>
+                US airports distance calculator
+              </Typography>
+            </Box>
+          </Grid2>
+          <Grid2 xs={12} sm={6} >
+            {airports.length ? (
+              <Autocomplete
+                options={airports}
+                renderInput={AutocompleteTextInput}
+              />
+            ) : <CentralizedProgress />}
+          </Grid2>
+        </Grid2>
+      </Container>
+    </>
   );
 }
