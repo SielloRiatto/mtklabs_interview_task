@@ -1,13 +1,50 @@
 "use client"
 
-import { fetchUSAirportsNames } from "@/data/fetchUSAirportsNames"
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import { useEffect, useState } from "react"
+import {
+    SyntheticEvent,
+    useEffect,
+    useState,
+    useCallback
+} from "react"
 
-export default function AutocompleteAirports() {
+import {
+    Autocomplete,
+    AutocompleteChangeDetails,
+    AutocompleteChangeReason,
+    CircularProgress,
+    TextField
+} from "@mui/material"
+
+import { AirportBasicData, fetchUSAirports } from "@/data/fetchUSAirports"
+
+interface AutocompleteAirportsProps {
+    id: string,
+    from?: boolean,
+    onChange: (
+        event: SyntheticEvent<Element, Event>,
+        value: AirportBasicData | null,
+        reason: AutocompleteChangeReason,
+        details?: AutocompleteChangeDetails<AirportBasicData> | undefined
+    ) => void,
+}
+
+export default function AutocompleteAirports({
+    id,
+    from = false,
+    onChange,
+}: AutocompleteAirportsProps) {
     const [open, setOpen] = useState(false)
-    const [options, setOptions] = useState<readonly string[]>([])
+    const [options, setOptions] = useState<readonly AirportBasicData[]>([])
+    
     const loading = open && options.length === 0
+
+    const getOptionLabel = useCallback((option: AirportBasicData): string => (
+        option.name + (
+            option.iata_code ? ', IATA: ' + option.iata_code : ''
+        ) + (
+            option.icao_code ? ', ICAO: ' + option.icao_code : ''
+        )
+    ), [])
 
     useEffect(() => {
         let active = true;
@@ -18,7 +55,7 @@ export default function AutocompleteAirports() {
     
         (async () => {
             if (active) {
-                const airports = await fetchUSAirportsNames()
+                const airports = await fetchUSAirports()
                 setOptions([...airports])
             }
         })()
@@ -36,22 +73,21 @@ export default function AutocompleteAirports() {
 
     return (
         <Autocomplete
-            id="autocomplete-apiports"
+            id={id}
             open={open}
-            onOpen={() => {
-                setOpen(true);
-            }}
-            onClose={() => {
-                setOpen(false);
-            }}
-            isOptionEqualToValue={(option, value) => option === value}
-            getOptionLabel={(option) => option}
             options={options}
             loading={loading}
+
+            onOpen={() => { setOpen(true) }}
+            onClose={() => { setOpen(false) }}
+            onChange={onChange}
+
+            getOptionLabel={getOptionLabel}
+            isOptionEqualToValue={(option, value) => option.name === value.name}
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Airport"
+                    label={`${from ? 'From' : 'To'} airport`}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (

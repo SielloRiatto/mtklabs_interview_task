@@ -1,21 +1,25 @@
 "use server"
 
-export interface AirportData {
-    name: string,
-    country_code: string,
-    iata_code: string,
-    icao_code: string,
-    lat: number,
-    lng: number,
+export interface AirportBasicData {
+    name: string;
+    lat: number;
+    lng: number;
+    iata_code: string | null;
+    icao_code: string | null;
+    country_code: string;
+}
+
+export interface AirportData extends AirportBasicData {
     population?: number,
     continent?: string,
     currency?: string,
     names?: {
-      [key: string]: string
+        [key: string]: string
     }[]
 }
 
-export async function fetchUSAirportsNames(): Promise<string[]> {    
+
+export async function fetchUSAirports(): Promise<AirportBasicData[]> {    
     const url: string = 'https://airlabs.co/api/v9/airports'
     const params: { [key: string]: string} = {
       api_key: 'daae47ca-1693-4405-ae4c-a9029e84b0dc',
@@ -31,9 +35,7 @@ export async function fetchUSAirportsNames(): Promise<string[]> {
         if (response.ok) {
             try {
                 const json: { response: AirportData[] } = await response.json()
-                const names = json.response.map((data: AirportData) => data.name)
-                
-                return names
+                return json.response
             } catch (err) {
                 throw new Error(`Failed 'json' the response`)
             }
