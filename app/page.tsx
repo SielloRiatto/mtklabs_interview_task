@@ -11,7 +11,7 @@ export default function Home() {
     <>
     <CssBaseline />
     <Container maxWidth="md">
-      <Box style={{ paddingTop: "120px" }}>
+      <Box style={{ paddingTop: "3rem" }}>
         <Typography variant="h3" gutterBottom>
           US airports distance calculator
         </Typography>

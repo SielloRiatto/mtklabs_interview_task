@@ -8,6 +8,7 @@ import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
 import { AirportBasicData } from "@/data/fetchUSAirports"
 import { haversineDistance } from "@/utils/haversineDistance"
 import AutocompleteAirports from "./AutocompleteAirports"
+import FlyingRouteMap from "./FlyingRouteMap"
 
 
 export default function AirportsSelectionGrid() {
@@ -71,6 +72,11 @@ export default function AirportsSelectionGrid() {
                     )}
                 </Typography>
             </Grid2>
+            {airportFrom && airportTo ? (
+                <Grid2 xs={12}>
+                    <FlyingRouteMap airportFrom={airportFrom} airportTo={airportTo} />
+                </Grid2>
+            ) : null}
         </Grid2>
     )
 }
