@@ -15,7 +15,8 @@ import {
     TextField
 } from "@mui/material"
 
-import { AirportBasicData, fetchUSAirports } from "@/data/fetchUSAirports"
+import { AirportBasicData } from "@/app/api/airports/route"
+
 
 interface AutocompleteAirportsProps {
     id: string,
@@ -54,8 +55,11 @@ export default function AutocompleteAirports({
         }
     
         if (active) {
-            fetchUSAirports()
+            fetch('/api/airports')
+            .then((response) => response.json())
             .then((airports) => {
+                console.log(airports)
+                
                 setOptions([...airports])
             })
             .catch((err) => console.log(err.message))

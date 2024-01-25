@@ -1,6 +1,6 @@
 'use client'
 
-import { AirportBasicData } from "@/data/fetchUSAirports"
+import { AirportBasicData } from "@/app/api/airports/route"
 import {
   ComposableMap,
   Geographies,

@@ -5,14 +5,14 @@ import { SyntheticEvent, useCallback, useEffect, useState } from "react"
 import { AutocompleteChangeDetails, AutocompleteChangeReason, Typography } from "@mui/material"
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2"
 
-import { AirportBasicData } from "@/data/fetchUSAirports"
+import { AirportBasicData } from "@/app/api/airports/route"
 import { haversineDistance } from "@/utils/haversineDistance"
 import AutocompleteAirports from "./AutocompleteAirports"
 import FlyingRouteMap from "./FlyingRouteMap"
 
 
 export default function AirportsSelectionGrid() {
-    const [airportFrom, setAirportFrom] = useState<AirportBasicData | null>(null)
+    const [airportFrom, setAirportFrom] = useState<AirportBasicData| null>(null)
     const [airportTo, setAirportTo] = useState<AirportBasicData | null>(null)
     const [distance, setDistance] = useState<number>(0)
 
