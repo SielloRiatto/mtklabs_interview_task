@@ -1,4 +1,4 @@
-"use client"
+'use server'
 
 export interface AirportBasicData {
     name: string;
@@ -30,7 +30,7 @@ export async function fetchUSAirports(): Promise<AirportBasicData[]> {
     const queryString: string = new URLSearchParams(params).toString()
 
     try {
-        const response = await fetch(`${url}?${queryString}`)
+        const response = await fetch(`${url}?${queryString}`, {mode: 'no-cors'})
 
         if (response.ok) {
             try {
