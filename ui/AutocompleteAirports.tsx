@@ -53,12 +53,13 @@ export default function AutocompleteAirports({
           return undefined;
         }
     
-        (async () => {
-            if (active) {
-                const airports = await fetchUSAirports()
+        if (active) {
+            fetchUSAirports()
+            .then((airports) => {
                 setOptions([...airports])
-            }
-        })()
+            })
+            .catch((err) => console.log(err.message))
+        }
 
         return () => {
             active = false
