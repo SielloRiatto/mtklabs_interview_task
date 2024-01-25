@@ -1,4 +1,4 @@
-"use server"
+"use client"
 
 export interface AirportBasicData {
     name: string;
